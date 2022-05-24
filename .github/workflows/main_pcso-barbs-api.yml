@@ -2,7 +2,6 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Build and deploy ASP.Net Core app to Azure Web App - pcso-barbs-api
-
 on:
   push:
     branches:
@@ -16,17 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-
       - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: |
+          cd .\pcso-barbs-api
+          dotnet build -c Release
+          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -51,7 +44,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'pcso-barbs-api'
+          app-name: 'pcso-ali-backend'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F79FEC5B1532406895DBB357B7DD9723 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_892452A4CE3847C3A6CEE3F1FD942C53 }}
           package: .
