@@ -18,9 +18,8 @@ jobs:
       - name: Build with dotnet
         run: |
           cd .\pcso-barbs-api
-          dotnet build -d Release
-          dotnet publish -d Release -o ${{env.DOTNET_ROOT}}/myapp
-
+          dotnet build -c Release
+          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
@@ -44,7 +43,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'pcso-ali-backend'
+          app-name: 'pcso-barbs-api'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_892452A4CE3847C3A6CEE3F1FD942C53 }}
           package: .
