@@ -8,9 +8,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseHttpsRedirection();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseHttpsRedirection();
 
 app.MapGet("/", () => "Hello World!");
 
@@ -28,6 +28,7 @@ app.MapGet("/todoitems/{id}", async (int id, TodoDb db) =>
 
 app.MapPost("/todoitems", async (Todo todo, TodoDb db) =>
 {
+    todo.Created = DateTime.Now;
     db.Todos.Add(todo);
     await db.SaveChangesAsync();
 
@@ -58,6 +59,20 @@ app.MapDelete("/todoitems/{id}", async (int id, TodoDb db) =>
     }
 
     return Results.NotFound();
+});
+
+app.MapDelete("/todoitems", async (TodoDb db) =>
+{
+    if ((db?.Todos?.Count() ?? 0) < 1)
+        return Results.Ok;
+
+    foreach (var todo in db.Todos)
+    {
+        db.Todos.Remove(todo);
+    }
+
+    await db.SaveChangesAsync();
+    return Results.Ok;
 });
 
 app.Run();
