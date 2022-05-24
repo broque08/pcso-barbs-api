@@ -18,8 +18,8 @@ jobs:
       - name: Build with dotnet
         run: |
           cd .\pcso-barbs-api
-          dotnet build -c Release
-          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+          dotnet build -d Release
+          dotnet publish -d Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
