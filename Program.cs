@@ -63,16 +63,9 @@ return Results.NotFound();
 
 app.MapDelete("/todoitems", async (TodoDb db) =>
 {
-if ((db?.Todos?.Count() ?? 0) < 1)
-return Results.Ok;
-
-foreach (var todo in db.Todos)
-{
-db.Todos.Remove(todo);
-}
-
-await db.SaveChangesAsync();
-return Results.Ok;
+    await db.Database.EnsureDeletedAsync();
+    await db.SaveChangesAsync();
+    return Results.Ok(null);
 });
 
 app.Run();
