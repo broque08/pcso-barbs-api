@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
@@ -7,10 +9,16 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
+
+builder.Services.AddCors();
+
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+
+app.MapHub<Chat>(nameof(Chat));
 
 app.MapGet("/", () => "Hello World!");
 
@@ -68,6 +76,13 @@ app.MapDelete("/todoitems", async (TodoDb db) =>
     return Results.Ok(null);
 });
 
+app.UseCors(builder => builder
+         .AllowAnyHeader()
+         .AllowAnyMethod()
+         .SetIsOriginAllowed((host) => true)
+         .AllowCredentials()
+     );
+
 app.Run();
 
 class Todo
@@ -85,4 +100,11 @@ class TodoDb : DbContext
         : base(options) { }
 
     public DbSet<Todo> Todos => Set<Todo>();
+}
+public class Chat : Hub
+{
+    public void Broadcast(string name, string message)
+    {
+        Clients.All.SendAsync("Receive", name, message);
+    }
 }
